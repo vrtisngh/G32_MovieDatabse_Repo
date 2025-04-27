@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Movie Fusion - Home{% endblock %}
+
+{% block content %}
+
+<div class="hero-section video-hero text-white text-center mb-5">
+    <video autoplay muted loop playsinline class="hero-bg-video">
+        <source src="{% static 'videos/hero_background.mp4' %}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="hero-overlay">
+        <h1 class="display-4 accent-text fw-bold">Welcome to Movie Fusion</h1>
+        <p class="lead">Your ultimate destination for movie reviews and ratings</p>
+        <div class="mt-4">
+            <a href="{% url 'movie_list' %}" class="btn btn-primary btn-lg hover-grow">Browse All Movies</a>
+        </div>
+    </div>
+</div>
+
+
+<div class="row mb-5">
+    <div class="col-md-12">
+        <h2 class="page-title border-bottom pb-2 mb-4" style="color: wheat;" ><i class="fas fa-film me-2" ></i>Recently Added Movies</h2>
+        <div class="row">
+            {% for movie in recent_movies %}
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100 movie-card shadow-hover" data-rating="{{ movie.average_rating|floatformat:1 }}">
+                        <a href="{% url 'movie_detail' movie.id %}" class="movie-poster-link">
+                            {% if movie.poster %}
+                                <img src="{{ movie.poster }}" class="card-img-top movie-card-img" alt="{{ movie.title }}">
+                            {% else %}
+                                <div class="card-img-top movie-card-img d-flex justify-content-center align-items-center bg-secondary">
+                                    <i class="fas fa-film fa-3x"></i>
+                                </div>
+                            {% endif %}
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate fw-bold">{{ movie.title }}</h5>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-secondary">{{ movie.release_date.year }}</span>
+                                <div class="rating-stars">
+                                    {% with avg_rating=movie.average_rating %}
+                                        {% for i in "12345"|make_list %}
+                                            <i class="far fa-star"></i>
+                                        {% endfor %}
+                                        <small class="rating-text ms-1">{{ avg_rating|floatformat:1 }}/10</small>
+                                    {% endwith %}
+                                </div>
+                            </div>
+                            <a href="{% url 'movie_detail' movie.id %}" class="btn btn-sm btn-primary w-100 hover-grow">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <p class="text-center alert alert-info">No movies available yet.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="page-title border-bottom pb-2 mb-4" style="color: wheat;"><i class="fas fa-trophy me-2"></i>Top Rated Movies</h2>
+        <div class="row">
+            {% for movie in top_rated_movies %}
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100 movie-card shadow-hover" data-rating="{{ movie.average_rating|floatformat:1 }}">
+                        <div class="ribbon-wrapper"> <!-- we have used bootstrap ribbon here-->
+                            <div class="ribbon">Top Rated</div>
+                        </div>
+                        <a href="{% url 'movie_detail' movie.id %}" class="movie-poster-link">
+                            {% if movie.poster %}
+                                <img src="{{ movie.poster }}" class="card-img-top movie-card-img" alt="{{ movie.title }}">
+                            {% else %}
+                                <div class="card-img-top movie-card-img d-flex justify-content-center align-items-center bg-secondary">
+                                    <i class="fas fa-film fa-3x"></i>
+                                </div>
+                            {% endif %}
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title text-truncate fw-bold">{{ movie.title }}</h5>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-secondary">{{ movie.release_date.year }}</span>
+                                <div class="rating-stars">
+                                    {% with avg_rating=movie.average_rating %}
+                                        {% for i in "12345"|make_list %} <!--to convert a string to a list of characters-->
+                                            <i class="far fa-star"></i>
+                                        {% endfor %}
+                                        <small class="rating-text ms-1">{{ avg_rating|floatformat:1 }}/10</small><!-- pipe symbol (|) for custom filtering-->
+                                    {% endwith %}
+                                </div>
+                            </div>
+                            <a href="{% url 'movie_detail' movie.id %}" class="btn btn-sm btn-primary w-100 hover-grow">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <p class="text-center alert alert-info">No movies available yet.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Base styling */
+    .accent-text {
+        background: linear-gradient(45deg, #ff4e50, #f9d423);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0px 2px 3px rgba(0,0,0,0.2);
+    }
+    
+    .page-title {
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Card styling */
+    .movie-card {
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .shadow-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    
+    .movie-card-img {
+    height: 300px; /* increased height to fit more of the image */
+    width: 100%;
+    object-fit: cover; /* changed from 'contain' to 'cover' */
+    background-color: #000;
+    transition: all 0.5s ease;
+}
+
+
+    
+    /* Simple link without hover overlay */
+    .movie-poster-link {
+        text-decoration: none;
+        display: block;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    /* Button hover effect */
+    .hover-grow {
+        transition: all 0.2s ease;
+    }
+    
+    .hover-grow:hover {
+        transform: scale(1.05);
+    }
+    
+    /* Rating stars */
+    .rating-stars {
+        font-size: 0.9em;
+    }
+    
+    .rating-stars .fas.fa-star {
+        color: gold !important;
+    }
+    
+    /* Rating text color to white */
+    .rating-text {
+        color: white !important;
+    }
+    
+    /* Hero section */
+    .hero-section {
+        background: linear-gradient(to right, #141e30, #243b55);
+        margin-bottom: 3rem !important;
+    }
+    
+    /* Ribbon for top rated movies */
+    .ribbon-wrapper {
+        width: 85px;
+        height: 88px;
+        overflow: hidden;
+        position: absolute;
+        top: -3px;
+        right: -3px;
+        z-index: 1;
+    }
+    
+    .ribbon {
+        font-size: 10px;
+        font-weight: bold;
+        color: #FFF;
+        text-transform: uppercase;
+        text-align: center;
+        line-height: 20px;
+        transform: rotate(45deg);
+        width: 120px;
+        background: linear-gradient(#F70505 0%, #8F0808 100%);
+        box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+        position: absolute;
+        top: 19px;
+        right: -30px;
+    }
+    .video-hero {
+    position: relative;
+    height: 60vh;
+    overflow: hidden;
+    border-radius: 1rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.hero-bg-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.hero-overlay {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    backdrop-filter: brightness(0.8);
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 1rem;
+}
+
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const movieCards = document.querySelectorAll('.movie-card');
+
+        movieCards.forEach(card => {
+            const ratingValue = parseFloat(card.dataset.rating);
+            const starsContainers = card.querySelectorAll('.rating-stars');
+
+            starsContainers.forEach(container => {
+                const starElements = container.querySelectorAll('i');
+                const normalizedRating = (ratingValue / 10) * 5;
+                const roundedRating = Math.round(normalizedRating);
+
+                starElements.forEach((star, index) => {
+                    if (index < roundedRating) {
+                        star.classList.remove('far');
+                        star.classList.add('fas');
+                        star.classList.add('fa-star');
+                        star.style.color = 'gold';
+                    } else {
+                        star.classList.add('far');
+                        star.classList.add('fa-star');
+                        star.style.color = 'lightgray';
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+{% endblock %}
